@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider_example/providers/providerclass.dart';
 import '../constants.dart';
-import '../helper/addtask.dart';
-
-final providerClassProvider = ChangeNotifierProvider<ProviderClass>((ref) {
-  return ProviderClass();
-});
-
-var todoProvider = StateProvider((ref) {
-  final todo = ref.watch(providerClassProvider).todo;
-  return todo;
-});
+import '../providers/providers.dart';
+import 'addtask.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({Key? key}) : super(key: key);
