@@ -35,8 +35,6 @@ class ProviderClass extends ChangeNotifier {
     notifyListeners();
   }
 
-  // bool isChecked = false;
-
   Future<void> changeIsChecked(int id, String title, int checkvalue) async {
     await SQLHelper.updatecheckvalue(id, title, checkvalue);
     refreshNotes();

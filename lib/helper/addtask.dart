@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/providerclass.dart';
-
-final providerClassProvider = ChangeNotifierProvider<ProviderClass>((ref) {
-  return ProviderClass();
-});
+import '../screens/taskscreen.dart';
 
 class AddTask extends ConsumerWidget {
   final TextEditingController addTaskController;
@@ -67,13 +63,16 @@ class AddTask extends ConsumerWidget {
                 width: double.infinity,
               ),
               onTap: () async {
+                if (addTaskController.text.isEmpty) {
+                  return;
+                }
                 await ref
                     .read(providerClassProvider.notifier)
                     .addTask(addTaskController.text);
-                ref.read(providerClassProvider.notifier).refreshNotes();
                 addTaskController.clear();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
+                    duration: Duration(milliseconds: 700),
                     content: Text('A new Task as been added!'),
                   ),
                 );

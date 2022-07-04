@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider_example/providers/providerclass.dart';
-import '../helper/addtask.dart';
 import '../constants.dart';
+import '../helper/addtask.dart';
 
 final providerClassProvider = ChangeNotifierProvider<ProviderClass>((ref) {
   return ProviderClass();
@@ -43,12 +43,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final todos = ref.watch(todoProvider);
-    final todocount = todos.length;
+    final todosList = ref.watch(todoProvider);
+    final todocount = todosList.length;
 
-    List todosList = ref.watch(providerClassProvider).todo;
-
-    //returns todo list
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       body: Column(
@@ -94,6 +91,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             .deleteAllTasks();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
+                            duration: Duration(milliseconds: 700),
                             content: Text('All Tasks have been deleted!'),
                           ),
                         );
@@ -109,50 +107,55 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           ),
           Expanded(
             child: Container(
-                decoration: kcontainerdeco,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ListView.builder(
-                  itemCount: todocount,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        //
-                        todos[index]['title'],
-                        style: TextStyle(
-                          decoration: !(todos[index]['checked'] == 0)
-                              ? TextDecoration.lineThrough
-                              : null,
-                        ),
+              decoration: kcontainerdeco,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ListView.builder(
+                itemCount: todocount,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                      todosList[index]['title'],
+                      style: TextStyle(
+                        decoration: !(todosList[index]['checked'] == 0)
+                            ? TextDecoration.lineThrough
+                            : null,
                       ),
-                      trailing: Checkbox(
-                        activeColor: Colors.lightBlueAccent,
-                        value: !(todos[index]['checked'] == 0),
-                        onChanged: (value) {
-                          ref
-                              .read(providerClassProvider.notifier)
-                              .changeIsChecked(
-                                todos[index]['id'],
-                                todos[index]['title'],
-                                todos[index]['checked'],
-                              );
-                        },
-                      ),
-                      onLongPress: () {
+                    ),
+                    trailing: Checkbox(
+                      activeColor: Colors.lightBlueAccent,
+                      value: !(todosList[index]['checked'] == 0),
+                      onChanged: (value) {
                         ref
                             .read(providerClassProvider.notifier)
-                            .deleteTask(todos[index]['id']);
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('Successfully deleted the Task!'),
-                        ));
+                            .changeIsChecked(
+                              todosList[index]['id'],
+                              todosList[index]['title'],
+                              todosList[index]['checked'],
+                            );
                       },
-                    );
-                  },
-                )),
+                    ),
+                    onLongPress: () {
+                      ref
+                          .read(providerClassProvider.notifier)
+                          .deleteTask(todosList[index]['id']);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          duration: Duration(milliseconds: 700),
+                          content: Text('Successfully deleted the Task!'),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
           )
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        elevation: 10,
+        isExtended: true,
+        mini: true,
         backgroundColor: Colors.lightBlueAccent,
         child: const Icon(Icons.add),
         onPressed: () {
